@@ -5,11 +5,21 @@ import {v4 as uuid} from 'uuid'
 
 @Injectable()
 export class JogadoresService {
+    
     private jogadores: Jogador[] = []
     private readonly logger = new Logger(JogadoresService.name)
 
     async createUpdateJogador(dto: CreateJogadorDto): Promise<void>{
-        this.create(dto)
+        const { email }= dto
+
+        const existJogador = this.jogadores.find(jogador => jogador.email === email)
+
+        existJogador ? this.update(existJogador,dto) : this.create(dto)
+
+    }
+    
+    async getJogadores(): Promise<Jogador[]> {
+        return this.jogadores
     }
 
     private create(dto: CreateJogadorDto): void{
@@ -27,4 +37,11 @@ export class JogadoresService {
         this.logger.log(`createJogadorDto: ${JSON.stringify(jogador)}`)
         this.jogadores.push(jogador)
     }
+
+    private update(jogador: Jogador, dto: CreateJogadorDto): void {
+        const {name} = dto
+        
+        jogador.name = name
+    }
+
 }
