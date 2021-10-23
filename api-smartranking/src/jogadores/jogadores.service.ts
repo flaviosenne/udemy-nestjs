@@ -5,7 +5,7 @@ import {v4 as uuid} from 'uuid'
 
 @Injectable()
 export class JogadoresService {
-    
+        
     private jogadores: Jogador[] = []
     private readonly logger = new Logger(JogadoresService.name)
 
@@ -50,6 +50,11 @@ export class JogadoresService {
         const {name} = dto
         
         jogador.name = name
+    }
+
+    async deleteJogadorByEmail(email: string): Promise<void> {
+        this.jogadores = this.jogadores.filter(jogador => jogador.email !== email)
+        
     }
 
 }
