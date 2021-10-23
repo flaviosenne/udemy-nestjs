@@ -1,25 +1,28 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateJogadorDto } from './dtos/create-jogador.dto';
 import { Jogador } from './interfaces/jogador.interface';
-import {v4 as uuid} from 'uuid'
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class JogadoresService {
         
     private jogadores: Jogador[] = []
-    private readonly logger = new Logger(JogadoresService.name)
+
+    constructor(
+        @InjectModel('Jogador') private readonly jogadorModel: Model<Jogador>){}
 
     async createUpdateJogador(dto: CreateJogadorDto): Promise<void>{
         const { email }= dto
 
-        const existJogador = this.jogadores.find(jogador => jogador.email === email)
+        const existJogador = await this.jogadorModel.findOne({email}).exec()
 
-        existJogador ? this.update(existJogador,dto) : this.create(dto)
+        existJogador ? this.update(dto) : this.create(dto)
 
     }
     
     async getJogadores(): Promise<Jogador[]> {
-        return this.jogadores
+        return await this.jogadorModel.find().exec()
     }
 
     async getJogadorByEmail(email: string): Promise<Jogador> {
@@ -30,30 +33,18 @@ export class JogadoresService {
         return existJogador 
     }
 
-    private create(dto: CreateJogadorDto): void{
-        const {email, name, phoneNumber} = dto
-
-        const jogador: Jogador = {
-            _id: uuid(),
-            name,
-            email, 
-            phoneNumber, 
-            ranking: 'A',
-            rankingPosition: 1,
-            urlPhotoJogador: 'www.google.com.br/foto123.jpg'
-        }
-        this.logger.log(`createJogadorDto: ${JSON.stringify(jogador)}`)
-        this.jogadores.push(jogador)
+    private async create(dto: CreateJogadorDto): Promise<Jogador>{
+        return await new this.jogadorModel(dto).save()
     }
 
-    private update(jogador: Jogador, dto: CreateJogadorDto): void {
-        const {name} = dto
-        
-        jogador.name = name
+    private async update(dto: CreateJogadorDto): Promise<void> {
+        await this.jogadorModel.findOneAndUpdate(
+            {email: dto.email}, {$set: dto})
+            .exec()
     }
 
     async deleteJogadorByEmail(email: string): Promise<void> {
-        this.jogadores = this.jogadores.filter(jogador => jogador.email !== email)
+        await this.jogadorModel.remove({email}).exec()
         
     }
 

@@ -4,9 +4,8 @@ import { JogadoresModule } from './jogadores/jogadores.module';
 @Module({
   imports: [
     MongooseModule
-    .forRoot('mongodb+srv://joao:joao@nestjs-jogadores-rankin.ggar0.mongodb.net/smartranking?retryWrites=true&w=majority',
-    {useNewUrlParser: true, useCreateIndex: true,
-    useUnifiedTopology: true, useFindAndModift: false}
+    .forRoot('mongodb+srv://joao:joao@nestjs-jogadores-rankin.ggar0.mongodb.net/smart-ranking?retryWrites=true&w=majority',
+    { useUnifiedTopology: true }
     ),
     JogadoresModule
   ],
