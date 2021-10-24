@@ -8,12 +8,12 @@ import { JogadoresValidationParamsPipe } from './pipes/jogadores-validation-para
 @Controller('api/v1/jogadores')
 export class JogadoresController {
 
-    constructor(private readonly jogadoresService: JogadoresService){  }
+    constructor(private readonly service: JogadoresService){  }
 
     @Post()
     @UsePipes(ValidationPipe)
     async createJogador(@Body() dto: CreateJogadorDto): Promise<Jogador> {
-        return await this.jogadoresService.create(dto)
+        return await this.service.create(dto)
     }
 
     @Put('/:_id')
@@ -21,23 +21,23 @@ export class JogadoresController {
     async updateJogador(
         @Body() dto: UpdateJogadorDto, 
         @Param('_id', JogadoresValidationParamsPipe) _id: string ): Promise<void> {
-        await this.jogadoresService.update(_id, dto)
+        await this.service.update(_id, dto)
     }
 
     @Get()
     async getJogadores(): Promise<Jogador[]> {
-        return await this.jogadoresService.getAll()
+        return await this.service.getAll()
     }
 
     @Get('/:_id')
     async getJogador(
         @Param('_id') _id: string): Promise<Jogador> {
-        return await this.jogadoresService.getById(_id)
+        return await this.service.getById(_id)
     }
 
     @Delete('/:_id')
     async deleteJogadorById(
         @Param('_id') _id: string): Promise<void>{
-        this.jogadoresService.delete(_id)
+        this.service.delete(_id)
     }
 }

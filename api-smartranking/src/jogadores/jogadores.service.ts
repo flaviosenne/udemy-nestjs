@@ -7,20 +7,18 @@ import { UpdateJogadorDto } from './dtos/update-jogador.dto';
 
 @Injectable()
 export class JogadoresService {
-        
-    private jogadores: Jogador[] = []
 
     constructor(
-        @InjectModel('Jogador') private readonly jogadorModel: Model<Jogador>){}
+        @InjectModel('Jogador') private readonly model: Model<Jogador>){}
 
     async create(dto: CreateJogadorDto): Promise<Jogador>{
         const { email }= dto
 
-        const existJogador = await this.jogadorModel.findOne({email}).exec()
+        const existJogador = await this.model.findOne({email}).exec()
 
         if(existJogador) throw new BadRequestException(`jogador com email ${email} já cadastrado`)
         
-        return await new this.jogadorModel(dto).save()
+        return await new this.model(dto).save()
 
     }
 
@@ -28,16 +26,16 @@ export class JogadoresService {
 
         await this.getById(_id)
 
-        await this.jogadorModel.findOneAndUpdate({_id}, {$set: dto}).exec()
+        await this.model.findOneAndUpdate({_id}, {$set: dto}).exec()
 
     }
     
     async getAll(): Promise<Jogador[]> {
-        return await this.jogadorModel.find().exec()
+        return await this.model.find().exec()
     }
 
     async getById(_id: string): Promise<Jogador> {
-        const existJogador = this.jogadorModel.findOne({_id}).exec()
+        const existJogador = this.model.findOne({_id}).exec()
 
         if(!existJogador) throw new NotFoundException(`Jogador com id ${_id} não encontrado`)
         
@@ -47,7 +45,7 @@ export class JogadoresService {
     async delete(_id: string): Promise<void> {
         await this.getById(_id)
 
-        await this.jogadorModel.deleteOne({_id}).exec()
+        await this.model.deleteOne({_id}).exec()
         
     }
 
