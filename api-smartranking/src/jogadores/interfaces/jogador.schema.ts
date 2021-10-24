@@ -2,7 +2,7 @@ import {Schema} from 'mongoose'
 
 
 export const JogadorSchema = new Schema({
-    phoneNumber: {type: String, unique: true},
+    phoneNumber: {type: String},
     email: {type: String, unique: true},
     name: {type: String},
     ranking: {type: String},
