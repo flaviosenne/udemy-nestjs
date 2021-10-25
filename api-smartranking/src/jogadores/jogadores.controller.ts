@@ -1,9 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import {CreateJogadorDto} from './dtos/create-jogador.dto'
 import { UpdateJogadorDto } from './dtos/update-jogador.dto';
 import { Jogador } from './interfaces/jogador.interface';
 import { JogadoresService } from './jogadores.service';
-import { JogadoresValidationParamsPipe } from './pipes/jogadores-validation-params.pipe';
+import { ValidationParamsPipe } from '../common/pipes/validation-params.pipe';
 
 @Controller('api/v1/jogadores')
 export class JogadoresController {
@@ -20,7 +20,7 @@ export class JogadoresController {
     @UsePipes(ValidationPipe)
     async updateJogador(
         @Body() dto: UpdateJogadorDto, 
-        @Param('_id', JogadoresValidationParamsPipe) _id: string ): Promise<void> {
+        @Param('_id', ValidationParamsPipe) _id: string ): Promise<void> {
         await this.service.update(_id, dto)
     }
 
