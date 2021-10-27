@@ -8,7 +8,7 @@ import { Category } from './interfaces/categories.interface';
 
 @Injectable()
 export class CategoriesService {
-
+    
     constructor(
         @InjectModel('Category') 
         private readonly model: Model<Category>,
@@ -28,6 +28,20 @@ export class CategoriesService {
     async get(): Promise<Array<Category>> {
         return await this.model.find().populate('jogadores').exec()
     }
+    
+    async findByUserId(userId: any): Promise<Category> {
+
+        const jogadores = await this.jogadoresService.getAll()
+ 
+        const jogadorFilter = jogadores.filter( jogador => jogador._id == userId )
+ 
+        if (jogadorFilter.length == 0) {
+            throw new BadRequestException(`O id ${userId} não é um jogador!`)
+        }
+ 
+         return await this.model.findOne().where('jogadores').in(userId).exec() 
+ 
+     }
 
     async getByCategory(category: string): Promise<Category> {
         const existCategory = await this.model.findOne({category}).populate('jogadores').exec()

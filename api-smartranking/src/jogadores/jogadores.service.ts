@@ -9,7 +9,8 @@ import { UpdateJogadorDto } from './dtos/update-jogador.dto';
 export class JogadoresService {
 
     constructor(
-        @InjectModel('Jogador') private readonly model: Model<Jogador>){}
+        @InjectModel('Jogador') 
+        private readonly model: Model<Jogador>){}
 
     async create(dto: CreateJogadorDto): Promise<Jogador>{
         const { email }= dto
