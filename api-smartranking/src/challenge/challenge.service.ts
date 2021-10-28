@@ -127,4 +127,14 @@ export class ChallengeService {
             throw new InternalServerErrorException()
         }
     }
+
+    async delete(_id: string){
+        const challenge = await this.model.findOne({_id}).exec()
+
+        if(!challenge) throw new NotFoundException(`Desafio com id: ${_id} não encontrado`)
+
+        challenge.status = ChallengeStatus.CANCELED
+
+        await this.model.findOneAndUpdate({_id}, {$set: challenge}).exec()
+    }
 }
