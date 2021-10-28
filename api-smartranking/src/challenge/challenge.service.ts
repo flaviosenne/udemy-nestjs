@@ -25,7 +25,8 @@ export class ChallengeService {
         const jogadores = await this.jogadoresService.getAll()
 
         dto.jogadores.map(jogadorDto => {
-            const existJogador = jogadores.filter(jogador => jogador._id === jogadorDto._id)
+            console.log(jogadorDto)
+            const existJogador = jogadores.filter(jogador => jogador._id == jogadorDto._id)
 
             if(existJogador.length === 0) throw new BadRequestException(`O id ${jogadorDto._id} não é jogador`)
         })
@@ -48,8 +49,23 @@ export class ChallengeService {
         challengeToSaved.status = ChallengeStatus.PENDENT
         this.logger.log(`Challenge create: ${JSON.stringify(challengeToSaved)}`)
         
-        return await new this.model(dto).save()
+        return await new this.model(challengeToSaved).save()
 
     }
 
+    async getAll(): Promise<Array<Challenge>> {
+        return this.model.find()
+        .populate('jogadores')
+        .populate('requester')
+        .populate('match')
+        .exec()
+    }
+
+    async getById(_id: string): Promise<Challenge> {
+        return await this.model.findOne({_id})
+        .populate('jogadores')
+        .populate('requester')
+        .populate('match')
+        .exec()
+    }
 }
