@@ -49,7 +49,7 @@ export class ChallengeService {
         challengeToSaved.status = ChallengeStatus.PENDENT
         this.logger.log(`Challenge create: ${JSON.stringify(challengeToSaved)}`)
         
-        return await new this.model(challengeToSaved).save()
+        return await challengeToSaved.save()
 
     }
 
@@ -61,8 +61,16 @@ export class ChallengeService {
         .exec()
     }
 
-    async getById(_id: string): Promise<Challenge> {
-        return await this.model.findOne({_id})
+    async getByJogadorId(_id: any): Promise<Array<Challenge>> {
+        const jogadores = await this.jogadoresService.getAll()
+
+        const jogadorFilter = jogadores.filter(jogador => jogador._id == _id)
+
+        if(jogadorFilter.length == 0) throw new BadRequestException(`O id: ${_id} não é um jogador`)
+
+        return await this.model.find()
+        .where('jogadores')
+        .in(_id)        
         .populate('jogadores')
         .populate('requester')
         .populate('match')

@@ -19,8 +19,8 @@ export class ChallengeController {
     @Get()
     async getAll(
         @Query('idJogador')_id: string
-    ): Promise<Array<Challenge> | Challenge> {
-        return _id ? await this.service.getById(_id) : 
+    ): Promise<Array<Challenge>> {
+        return _id ? await this.service.getByJogadorId(_id) : 
         await this.service.getAll()
 
     }

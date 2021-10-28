@@ -7,7 +7,7 @@ export const ChallengeSchema = new Schema({
     dateHourResponse: {type: Date},
     requester: {type: Types.ObjectId, ref: "Jogador"},
     status: {type: String},
-    catgory: {type: String},
+    category: {type: String},
     jogadores: [
         {type: Types.ObjectId, ref: 'Jogador'}
     ],
