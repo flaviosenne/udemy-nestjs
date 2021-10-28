@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CategoriesService } from 'src/categories/categories.service';
 import { JogadoresService } from 'src/jogadores/jogadores.service';
 import { CreateChallengeDto } from './dto/create-challenge.dto';
+import { MatchChallengeDto } from './dto/match-challenge.dto';
 import { UpdateChallengeDto } from './dto/update-challenge.dto';
 import { ChallengeStatus } from './interfaces/challenge-status.enum';
 import { Challenge, Match } from './interfaces/challenge.interface';
@@ -93,5 +94,37 @@ export class ChallengeService {
 
 
         await this.model.findByIdAndUpdate({_id}, {$set: challenge}).exec()
+    }
+    
+    async postMatchChallenge(_id: string, dto: MatchChallengeDto){
+        const challenge = await this.model.findOne({_id})
+        .exec()
+
+        if(!challenge) throw new NotFoundException(`Desafio com id: ${_id} não encontrado`)
+
+        const jogadorFilter = challenge.jogadores.filter(jogador => jogador._id == dto.def)
+
+        this.logger.log(`challenge find: ${challenge}`)
+        this.logger.log(`jogador find: ${jogadorFilter}`)
+
+        if(jogadorFilter.length == 0) throw new BadRequestException(`O ogador vencedor não faz parte  do desafio`)
+
+        const matchToSave = new this.matchModel(dto)
+
+        matchToSave.category = challenge.category
+        matchToSave.jogadores = challenge.jogadores
+
+        const result = await matchToSave.save()
+
+        challenge.status = ChallengeStatus.REALIZED
+        
+        challenge.match = result._id
+
+        try{
+            await this.model.findByIdAndUpdate({_id}, {$set: challenge}).exec()
+        }catch(error){
+            await this.matchModel.deleteOne({_id: result._id}).exec()
+            throw new InternalServerErrorException()
+        }
     }
 }

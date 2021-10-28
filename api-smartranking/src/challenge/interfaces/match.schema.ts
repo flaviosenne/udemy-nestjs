@@ -6,7 +6,7 @@ export const MatchSchema = new Schema({
         { type: Types.ObjectId, ref: 'Jogador'}
     ],
     def: { type: Types.ObjectId, ref: 'Jogador' },
-    resultado: [ 
+    result: [ 
         { set: {type: String} } 
     ]
 }, {timestamps: true, collection: 'matches'})
