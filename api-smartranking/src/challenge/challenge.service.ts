@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CategoriesService } from 'src/categories/categories.service';
 import { JogadoresService } from 'src/jogadores/jogadores.service';
 import { CreateChallengeDto } from './dto/create-challenge.dto';
+import { UpdateChallengeDto } from './dto/update-challenge.dto';
 import { ChallengeStatus } from './interfaces/challenge-status.enum';
 import { Challenge, Match } from './interfaces/challenge.interface';
 
@@ -75,5 +76,22 @@ export class ChallengeService {
         .populate('requester')
         .populate('match')
         .exec()
+    }
+
+    async update(_id: string, dto: UpdateChallengeDto){
+
+        const challenge = await this.model.findOne({_id})
+
+        if(!challenge) throw new NotFoundException(`Desafio com id: ${_id} não encontrado`)
+
+        if(dto.status){
+            challenge.dateHourResponse = new Date()
+        }
+
+        challenge.status = dto.status
+        challenge.dateHourChallenge = dto.dateHourChallenge
+
+
+        await this.model.findByIdAndUpdate({_id}, {$set: challenge}).exec()
     }
 }
