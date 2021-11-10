@@ -12,6 +12,7 @@ export class CategoriesService {
     constructor(
         @InjectModel('Category') 
         private readonly model: Model<Category>,
+        @InjectModel('Player')
         private readonly jogadoresService: JogadoresService
     ){}
 
