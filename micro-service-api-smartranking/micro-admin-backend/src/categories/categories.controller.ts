@@ -1,18 +1,19 @@
 import { Controller, Logger } from '@nestjs/common';
-import { AppService } from './app.service';
-import { Payload, EventPattern, MessagePattern, Ctx, RmqContext}from '@nestjs/microservices'
-import { Category } from './interfaces/categories/category.interface';
+import { Ctx, EventPattern, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
+import { Category } from 'src/interfaces/categories/category.interface';
+import { ackErrors } from 'src/utils/list-errors.util';
+import { CategoriesService } from './categories.service';
 
-const ackErrors: string[] = ['E11000']
+
 
 @Controller()
-export class AppController {
-  constructor(private readonly appService: AppService) {}
+export class CategoriesController {
+  constructor(private readonly service: CategoriesService) {}
 
-  logger = new Logger(AppController.name)
+  logger = new Logger(CategoriesController.name)
 
   @EventPattern('create-category')
-  async createCategory(
+  async save(
     @Payload() category: Category, 
     @Ctx() context: RmqContext){
       const channel = context.getChannelRef()
@@ -20,7 +21,7 @@ export class AppController {
 
       this.logger.log(`category: ${JSON.stringify(category)}`)
       try{
-        await this.appService.createCategory(category)
+        await this.service.save(category)
         await channel.ack(originalMsg)
       
       }catch(e){
@@ -28,15 +29,14 @@ export class AppController {
         const filterAckError = ackErrors.filter(
           ackError => e.message.includes(ackError))
 
-        if(filterAckError){
-          await channel.ack(originalMsg)
-        }
+        if(filterAckError.length > 0) await channel.ack(originalMsg)
+        
       }
 
   }
 
   @MessagePattern('get-categories')
-  async getCategories(
+  async get(
     @Payload() _id: string,
     @Ctx() context: RmqContext){
     const channel = context.getChannelRef()
@@ -44,8 +44,8 @@ export class AppController {
     try{
 
       return _id 
-      ? await this.appService.getCategoryById(_id)
-      : await this.appService.getCategories()
+      ? await this.service.getById(_id)
+      : await this.service.get()
 
     }catch(e){
 
@@ -60,7 +60,7 @@ export class AppController {
   }
 
   @EventPattern('update-category')
-  async updateCategory(
+  async update(
     @Payload() data: any, 
     @Ctx() context: RmqContext){
       const channel = context.getChannelRef()
@@ -73,13 +73,13 @@ export class AppController {
         const _id: string = data.id
         const category: Category = data.category
 
-        await this.appService.updateCategory(_id, category)
+        await this.service.update(_id, category)
         await channel.ack(originalMessage)
 
       }catch(e){
         const filterAckError = ackErrors.filter(ack => e.message.includes(ack))
-
-        if(filterAckError) await channel.ack(originalMessage)
+        
+        if(filterAckError.length > 0) await channel.ack(originalMessage)
       }
 
   }

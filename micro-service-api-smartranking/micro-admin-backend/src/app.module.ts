@@ -1,22 +1,21 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { CategorySchema } from './interfaces/categories/category.schema';
 import { PlayerSchema } from './interfaces/players/player.schema';
+import { PlayersModule } from './players/players.module';
+import { CategoriesService } from './categories/categories.service';
+import { CategoriesController } from './categories/categories.controller';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
     MongooseModule
     .forRoot('mongodb+srv://joao:joao@nestjs-jogadores-rankin.ggar0.mongodb.net/sr-admin-backend?retryWrites=true&w=majority',
     { useUnifiedTopology: true }),
-    MongooseModule
-    .forFeature([
-      {name: 'Player', schema: PlayerSchema},
-      {name: 'Category', schema: CategorySchema}
-    ])
+    PlayersModule,
+    CategoriesModule
   ],
-  controllers: [AppController],
-  providers: [AppService]
+  controllers: [],
+  providers: []
 })
 export class AppModule {}

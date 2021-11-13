@@ -1,0 +1,1 @@
+export const ackErrors: string[] = ['E11000']
