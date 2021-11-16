@@ -1,4 +1,4 @@
-import { Schema, Types } from "mongoose"
+import { Schema } from "mongoose"
 
 export const CategorySchema = new Schema({
     category: {type: String, unique: true},

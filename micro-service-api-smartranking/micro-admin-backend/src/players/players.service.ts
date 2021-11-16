@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Ctx, EventPattern, Payload, RmqContext, RpcException } from '@nestjs/microservices';
+import { RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Player } from 'src/interfaces/players/player.interface';
+import { Player } from 'src/players/interface/player.interface';
 
 @Injectable()
 export class PlayersService {
@@ -50,9 +50,13 @@ export class PlayersService {
   }
 
   async delete(_id: string): Promise<void> {
-    await this.getById(_id)
+   try{
+     await this.model.deleteOne({_id}).exec()
 
-    await this.model.deleteOne({_id}).exec()
+   }catch(e){
+    this.logger.error(`error: ${JSON.stringify(e.message)}`)
+    throw new RpcException(e.message)
+   }
     
 }
 

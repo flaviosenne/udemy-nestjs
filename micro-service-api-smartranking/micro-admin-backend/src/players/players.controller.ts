@@ -1,6 +1,6 @@
 import { Controller, Logger, Query } from '@nestjs/common';
 import { Ctx, EventPattern, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
-import { Player } from 'src/interfaces/players/player.interface';
+import { Player } from 'src/players/interface/player.interface';
 import { ackErrors } from 'src/utils/list-errors.util';
 import { PlayersService } from './players.service';
 
@@ -14,10 +14,9 @@ export class PlayersController {
     async save(@Payload() player: Player, @Ctx() context: RmqContext) {
         const channel = context.getChannelRef()
         const originalMsg = context.getMessage()
-
-        this.logger.log(`player: ${JSON.stringify(player)}`)
-
+        
         try {
+            this.logger.log(`player: ${JSON.stringify(player)}`)
             await this.service.save(player)
             await channel.ack(originalMsg)
         } catch (e) {
@@ -69,12 +68,12 @@ export class PlayersController {
     }
 
     @EventPattern('delete-player')
-    async delete(@Payload() _id: string, @Ctx() context: RmqContext) {
+    async delete(@Payload() object: any, @Ctx() context: RmqContext) {
         const channel = context.getChannelRef()
         const originalMsg = context.getMessage()
 
         try {
-            await this.service.delete(_id)
+            await this.service.delete(object.id)
             await channel.ack(originalMsg)
         } catch (e) {
             this.logger.error(`error: ${JSON.stringify(e.message)}`)

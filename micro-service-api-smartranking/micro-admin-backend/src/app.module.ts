@@ -1,10 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CategorySchema } from './interfaces/categories/category.schema';
-import { PlayerSchema } from './interfaces/players/player.schema';
 import { PlayersModule } from './players/players.module';
-import { CategoriesService } from './categories/categories.service';
-import { CategoriesController } from './categories/categories.controller';
 import { CategoriesModule } from './categories/categories.module';
 
 @Module({

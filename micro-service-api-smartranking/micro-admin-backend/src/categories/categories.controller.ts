@@ -1,6 +1,6 @@
 import { Controller, Logger } from '@nestjs/common';
 import { Ctx, EventPattern, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
-import { Category } from 'src/interfaces/categories/category.interface';
+import { Category } from 'src/categories/interface/category.interface';
 import { ackErrors } from 'src/utils/list-errors.util';
 import { CategoriesService } from './categories.service';
 
