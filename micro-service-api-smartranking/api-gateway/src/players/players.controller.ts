@@ -1,4 +1,5 @@
-import { BadRequestException, Body, Controller, Delete, Get, Logger, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Logger, Param, Post, Put, Query, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Observable } from 'rxjs';
 import { CreatePlayerDto } from 'src/players/dto/create-player.dto';
 import { UpdatePlayerDto } from 'src/players/dto/update-player.dto';
@@ -48,5 +49,14 @@ export class PlayersController {
     @UsePipes(ValidationPipe)
     delete(@Param('_id') id: string) {
         this.clientAdminBackEnd.emit('delete-player', { id })
+    }
+
+    @Post('/:id/upload')
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadFile(
+        @UploadedFile() file, 
+        @Param('id') id: string){
+
+            this.logger.log(file)
     }
 }
