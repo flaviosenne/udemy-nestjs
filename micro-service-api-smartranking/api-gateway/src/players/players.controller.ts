@@ -1,13 +1,16 @@
 import { BadRequestException, Body, Controller, Delete, Get, Logger, Param, Post, Put, Query, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Observable } from 'rxjs';
+import { AwsService } from 'src/aws/aws.service';
 import { CreatePlayerDto } from 'src/players/dto/create-player.dto';
 import { UpdatePlayerDto } from 'src/players/dto/update-player.dto';
 import { ClientProxySmartRanking } from 'src/proxymq/client-proxy';
 
 @Controller('api/v1/players')
 export class PlayersController {
-    constructor(private clientProxySmartRanking: ClientProxySmartRanking) { }
+    constructor(
+        private clientProxySmartRanking: ClientProxySmartRanking,
+        private awsService: AwsService) { }
     
     private logger = new Logger(PlayersController.name)
 
@@ -57,6 +60,9 @@ export class PlayersController {
         @UploadedFile() file, 
         @Param('id') id: string){
 
-            this.logger.log(file)
+        await this.awsService.uploadFile(file, id)
+
+        return 'ok'
+
     }
 }
