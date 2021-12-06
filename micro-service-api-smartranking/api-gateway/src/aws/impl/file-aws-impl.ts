@@ -24,7 +24,9 @@ export class FileServiceAwsImpl implements FileService {
         const data = s3
             .putObject(params)
             .promise()
-            .then(data => { return data },
+            .then(data => { return { 
+                url:`https://bucket-name.s3-region.amazonaws.com/${path}` } 
+            },
                 err => {
                     this.logger.error(err)
                     return err

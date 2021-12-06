@@ -60,9 +60,18 @@ export class PlayersController {
         @UploadedFile() file, 
         @Param('id') id: string){
 
-        await this.awsService.uploadFile(file, id)
+        const player =  this.clientAdminBackEnd.send('get-players', id)
 
-        return 'ok'
+        if(!player) throw new BadRequestException('Jogador não encontrado')
+
+        const { url } = await this.awsService.uploadFile(file, id)
+
+        const dto:UpdatePlayerDto = {}
+        dto.urlPhotoJogador = url
+
+        this.clientAdminBackEnd.emit('update-player', {id, player: dto})
+        
+        return this.clientAdminBackEnd.send('get-players', id) 
 
     }
 }

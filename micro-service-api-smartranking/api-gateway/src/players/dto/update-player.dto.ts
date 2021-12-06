@@ -1,13 +1,10 @@
-import { IsNotEmpty } from 'class-validator'
+import { IsNotEmpty, IsOptional } from 'class-validator'
 
-export class UpdatePlayerDto {
+export class UpdatePlayerDto {    
     @IsNotEmpty()
-    readonly phoneNumber: string
+    category?: string
 
-    @IsNotEmpty()
-    readonly name: string
-    
-    @IsNotEmpty()
-    readonly category: string
+    @IsOptional()
+    urlPhotoJogador?: string
 
 }

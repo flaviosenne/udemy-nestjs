@@ -6,7 +6,8 @@ export class FileServiceNativeImpl implements FileService{
     upload(buffer: Buffer, path: string) {
         console.log('path ', path)
         console.log('buffer ', buffer)
-        fs.writeFileSync(resolve(__dirname,`./${path}`), buffer, 'binary')
+        // fs.writeFileSync(resolve(__dirname,`./${path}`), buffer, 'binary')
+        return 'url.example'
     }
 
 }
