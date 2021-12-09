@@ -8,6 +8,6 @@ export interface Player extends Document {
     name: string
     ranking: string
     rankingPosition: number
-    urlPhotoJogador: string
+    urlPhoto: string
     
 }

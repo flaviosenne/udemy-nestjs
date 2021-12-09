@@ -5,6 +5,6 @@ export class UpdatePlayerDto {
     category?: string
 
     @IsOptional()
-    urlPhotoJogador?: string
+    urlPhoto?: string
 
 }

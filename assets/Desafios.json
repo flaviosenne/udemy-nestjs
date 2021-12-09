@@ -1,0 +1,41 @@
+[{
+	"_id": "5f486d67f2dac47a83615ded",
+	"dataHoraDesafio": "2020-05-04 18:00:00",
+	"status": "REALIZADO",
+	"dataHoraSolicitacao": "2020-04-25 08:30:00",
+	"dataHoraResposta": "2020-04-26 08:30:00",
+	"solicitante": "5edeaf8193bfde4a10a2200c",
+	"categoria": "5f0a0c0e20e9f0219c9e6486",
+	"partida": "5f4ac38ad95ca6a17b0257ac",
+	"jogadores": [
+		"5f0a0ca820e9f0219c9e6492",
+		"5f0a104395d640224785d45f"
+	]
+},
+{
+	"_id": "5f4a6254938cf796a1276bdd",
+	"dataHoraDesafio": "2020-06-01 18:00:00",
+	"status": "PENDENTE",
+	"dataHoraSolicitacao": "2020-05-20 08:30:00",
+	"dataHoraResposta": "",
+	"solicitante": "5f0a0ca820e9f0219c9e6492",
+	"categoria": "5f0a0c1f20e9f0219c9e648a",
+	"jogadores": [
+		"5f0a0ca820e9f0219c9e6492",
+		"5f0a104395d640224785d45f"
+	]
+},
+{
+	"_id": "5f4a66c6938cf796a1276be0",
+	"dataHoraDesafio": "2020-01-10 18:00:00",
+	"status": "NEGADO",
+	"dataHoraResposta": "2020-01-05 08:30:00",
+	"dataHoraSolicitacao": "2020-01-01 08:30:00",
+	"solicitante": "5f0a0ca820e9f0219c9e6492",
+	"categoria": "5f2eec88d017fd3ae17fc3fb",
+	"jogadores": [
+		"5f0a0ca820e9f0219c9e6492",
+		"5f0a104395d640224785d45f"
+	]
+}
+]

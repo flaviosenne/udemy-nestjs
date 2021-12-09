@@ -1,0 +1,43 @@
+[{
+	"_id": "5f2eec88d017fd3ae17fc3fb",
+	"categoria": "A",
+	"descricao": "Categoria A",
+	"eventos": [{
+			"nome": "VITORIA",
+			"operacao": "+",
+			"valor": 30
+		},
+		{
+			"nome": "VITORIA_LIDER",
+			"operacao": "+",
+			"valor": 50
+		},
+		{
+			"nome": "DERROTA",
+			"operacao": "+",
+			"valor": 0
+		}
+	]
+},
+{
+	"_id": "5f0a0c0e20e9f0219c9e6486",
+	"categoria": "B",
+	"descricao": "Categoria B",
+	"eventos": [{
+			"nome": "VITORIA",
+			"operacao": "+",
+			"valor": 15
+		},
+		{
+			"nome": "VITORIA_LIDER",
+			"operacao": "+",
+			"valor": 30
+		},
+		{
+			"nome": "DERROTA",
+			"operacao": "+",
+			"valor": 0
+		}
+	]
+}
+]

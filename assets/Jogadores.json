@@ -1,0 +1,17 @@
+[{
+	"_id": "5f0a0ca820e9f0219c9e6492",
+	"telefoneCelular": "+5511994604755",
+	"email": "diegofsilva.fernandes@gmail.com",
+	"nome": "Diego Silva",
+	"urlFotoJogador": "https://smartranking.s3-sa-east-1.amazonaws.com/5f0a0ca820e9f0219c9e6492.png",
+	"categoria":  "534e5168-8baf-11ea-bc55-0242ac130005"
+},
+{
+	"_id": "5f0a104395d640224785d45e",
+	"telefoneCelular": "+5511994605050",
+	"email": "diegofsilva.smartranking@gmail.com",
+	"nome": "João Nogueira",
+	"urlFotoJogador": "https://smartranking.s3-sa-east-1.amazonaws.com/5f0a104395d640224785d45e.png",
+	"categoria":  "5f2eec88d017fd3ae17fc3fb"
+}
+]

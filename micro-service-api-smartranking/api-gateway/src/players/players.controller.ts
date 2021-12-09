@@ -67,7 +67,7 @@ export class PlayersController {
         const { url } = await this.awsService.uploadFile(file, id)
 
         const dto:UpdatePlayerDto = {}
-        dto.urlPhotoJogador = url
+        dto.urlPhoto = url
 
         this.clientAdminBackEnd.emit('update-player', {id, player: dto})
         

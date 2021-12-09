@@ -8,6 +8,6 @@ export const PlayerSchema = new Schema({
     category: {type: Types.ObjectId, ref: 'Category'},
     ranking: {type: String},
     rankingPosition: {type: Number},
-    urlPhotoJogador: {type: String}
+    urlPhoto: {type: String}
     
 }, {timestamps: true, collection: 'players'})
