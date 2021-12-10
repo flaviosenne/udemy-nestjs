@@ -17,7 +17,7 @@ export class ChallengeController {
     save(@Body() dto: CreateChallengeDto){
         this.logger.log(`create challenge: ${JSON.stringify(dto)}`)
 
-        this.clientAdminBackEnd.emit('save-challenge', dto)
+        this.clientAdminBackEnd.emit('create-challenge', dto)
 
     }
 }
