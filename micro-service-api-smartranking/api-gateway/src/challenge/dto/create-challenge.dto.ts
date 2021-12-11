@@ -3,5 +3,5 @@ export interface CreateChallengeDto {
     requester: string
     category: string
     match: string
-    players: {id:string}[]
+    players: {_id:string}[]
 }

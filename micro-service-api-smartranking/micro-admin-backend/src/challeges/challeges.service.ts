@@ -38,7 +38,7 @@ export class ChallegesService {
         const categoryPlayer = await this.categoryService.findByUserId(entity.requester, players)
 
         const challengeToSaved = new this.model(entity)
-        challengeToSaved.category = categoryPlayer
+        challengeToSaved.category = categoryPlayer.id
         challengeToSaved.dateHourRequest = new Date()
         this.logger.log(`challengeToSaved.dateHourChallenge: ${challengeToSaved.dateHourChallenge} `)
 
@@ -48,4 +48,29 @@ export class ChallegesService {
         return await challengeToSaved.save()
 
     }
+
+    async getAll(): Promise<Array<Challenge>> {
+        return this.model.find()
+        .populate('players')
+        .populate('requester')
+        .populate('match')
+        .exec()
+    }
+
+    async getByJogadorId(_id: any): Promise<Array<Challenge>> {
+        const players = await this.playerService.get()
+
+        const playerFilter = players.filter(player => player._id == _id)
+
+        if(playerFilter.length == 0) throw new BadRequestException(`O id: ${_id} não é um jogador`)
+
+        return await this.model.find()
+        .where('players')
+        .in(_id)        
+        .populate('players')
+        .populate('requester')
+        .populate('match')
+        .exec()
+    }
+
 }

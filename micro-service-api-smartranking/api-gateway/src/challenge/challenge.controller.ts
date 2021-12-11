@@ -1,4 +1,4 @@
-import { Body, Controller, Logger, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ClientProxySmartRanking } from 'src/proxymq/client-proxy';
 import { CreateChallengeDto } from './dto/create-challenge.dto';
 
@@ -14,10 +14,15 @@ export class ChallengeController {
 
     @Post()
     @UsePipes(ValidationPipe)
-    save(@Body() dto: CreateChallengeDto){
+    async save(@Body() dto: CreateChallengeDto){
         this.logger.log(`create challenge: ${JSON.stringify(dto)}`)
 
         this.clientAdminBackEnd.emit('create-challenge', dto)
+    }
+
+    @Get()
+    get(@Query('playerId') _id: string){
+        return this.clientAdminBackEnd.send('get-challenges', _id ? _id : '')
 
     }
 }
