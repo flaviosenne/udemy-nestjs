@@ -1,15 +1,15 @@
 import { Controller, Logger } from '@nestjs/common';
 import { Ctx, EventPattern, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 import { ackErrors } from 'src/utils/list-errors.util';
-import { ChallegesService } from './challeges.service';
+import { ChallengesService } from './challenges.service';
 import { Challenge } from './interface/challenge.interface';
 
 @Controller()
-export class ChallegesController {
+export class ChallengesController {
 
-    constructor(private readonly service: ChallegesService){}
+    constructor(private readonly service: ChallengesService){}
 
-    logger: Logger = new Logger(ChallegesController.name)
+    logger: Logger = new Logger(ChallengesController.name)
 
     @EventPattern('create-challenge')
     async save(@Payload() challenge: Challenge, @Ctx() context: RmqContext){

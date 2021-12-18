@@ -7,14 +7,14 @@ import { ChallengeStatus } from './interface/challenge-status.enum';
 import { Challenge } from './interface/challenge.interface';
 
 @Injectable()
-export class ChallegesService {
+export class ChallengesService {
     constructor(
         @InjectModel('Challenge')
         private readonly model: Model<Challenge>, 
         private readonly playerService: PlayersService,
         private readonly categoryService: CategoriesService) { }
 
-    logger: Logger = new Logger(ChallegesService.name)
+    logger: Logger = new Logger(ChallengesService.name)
 
     async save(entity: Challenge) {
 
