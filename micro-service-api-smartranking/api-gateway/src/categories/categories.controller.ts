@@ -10,20 +10,20 @@ export class CategoriesController {
 
     private logger = new Logger(CategoriesController.name)
 
-    private clientAdminBackEnd = this.clientProxySmartRanking
+    private queueProxy = this.clientProxySmartRanking
     .getClientProxyAdminBackEndInstance()
 
 
     @Post()
     @UsePipes(ValidationPipe)
     save( @Body() dto: CreateCategoryDto){
-        this.clientAdminBackEnd.emit('create-category', dto)
+        this.queueProxy.emit('create-category', dto)
     }
 
 
     @Get()
     get(@Query('idCategory')_id:string): Observable<any>{
-        return this.clientAdminBackEnd.send('get-categories', _id ? _id: '')
+        return this.queueProxy.send('get-categories', _id ? _id: '')
     }
 
     @Put('/:_id')
@@ -31,6 +31,6 @@ export class CategoriesController {
     update(
         @Body() dto: UpdateCategoryDto,
         @Param('_id') id: string){
-        this.clientAdminBackEnd.emit('update-category', {id, category: dto})
+        this.queueProxy.emit('update-category', {id, category: dto})
     }
 }

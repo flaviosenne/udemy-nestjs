@@ -14,7 +14,7 @@ export class PlayersController {
     
     private logger = new Logger(PlayersController.name)
 
-    private clientAdminBackEnd = this.clientProxySmartRanking
+    private queueProxy = this.clientProxySmartRanking
     .getClientProxyAdminBackEndInstance()
 
 
@@ -23,17 +23,17 @@ export class PlayersController {
     save(@Body() dto: CreatePlayerDto) {
         this.logger.log(`create player: ${JSON.stringify(dto)}`)
         
-        const category = this.clientAdminBackEnd.send('get-categories', dto.category)
+        const category = this.queueProxy.send('get-categories', dto.category)
         
         if(!category) throw new BadRequestException(`Categoria não cadastrada`)
 
-        this.clientAdminBackEnd.emit('create-player', dto)
+        this.queueProxy.emit('create-player', dto)
     }
 
 
     @Get()
     get(@Query('idPlayer') _id: string): Observable<any> {
-        return this.clientAdminBackEnd.send('get-players', _id ? _id : '')
+        return this.queueProxy.send('get-players', _id ? _id : '')
     }
 
     @Put('/:_id')
@@ -41,17 +41,17 @@ export class PlayersController {
     update(
         @Body() dto: UpdatePlayerDto,
         @Param('_id') id: string) {
-        const category = this.clientAdminBackEnd.send('get-categories', dto.category)
+        const category = this.queueProxy.send('get-categories', dto.category)
         
         if(!category) throw new BadRequestException(`Categoria não cadastrada`)
 
-        this.clientAdminBackEnd.emit('update-player', { id, player: dto })
+        this.queueProxy.emit('update-player', { id, player: dto })
     }
 
     @Delete('/:_id')
     @UsePipes(ValidationPipe)
     delete(@Param('_id') id: string) {
-        this.clientAdminBackEnd.emit('delete-player', { id })
+        this.queueProxy.emit('delete-player', { id })
     }
 
     @Post('/:id/upload')
@@ -60,7 +60,7 @@ export class PlayersController {
         @UploadedFile() file, 
         @Param('id') id: string){
 
-        const player =  this.clientAdminBackEnd.send('get-players', id)
+        const player =  this.queueProxy.send('get-players', id)
 
         if(!player) throw new BadRequestException('Jogador não encontrado')
 
@@ -69,9 +69,9 @@ export class PlayersController {
         const dto:UpdatePlayerDto = {}
         dto.urlPhoto = url
 
-        this.clientAdminBackEnd.emit('update-player', {id, player: dto})
+        this.queueProxy.emit('update-player', {id, player: dto})
         
-        return this.clientAdminBackEnd.send('get-players', id) 
+        return this.queueProxy.send('get-players', id) 
 
     }
 }

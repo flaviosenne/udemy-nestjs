@@ -32,7 +32,7 @@ export class PlayersService {
 
   async getById(_id: string): Promise<Player> {
     try {
-      return await this.model.findOne({_id}).exec()
+      return await this.model.findOne({_id}).populate('category').exec()
     } catch (e) {
       this.logger.error(`error: ${JSON.stringify(e.message)}`)
       throw new RpcException(e.message)
