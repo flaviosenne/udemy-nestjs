@@ -1,8 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CategoriesService } from 'src/categories/categories.service';
-import { PlayersService } from 'src/players/players.service';
 import { ChallengeStatus } from './interface/challenge-status.enum';
 import { Challenge } from './interface/challenge.interface';
 
@@ -10,67 +9,94 @@ import { Challenge } from './interface/challenge.interface';
 export class ChallengesService {
     constructor(
         @InjectModel('Challenge')
-        private readonly model: Model<Challenge>, 
-        private readonly playerService: PlayersService,
-        private readonly categoryService: CategoriesService) { }
+        private readonly model: Model<Challenge>) { }
 
     logger: Logger = new Logger(ChallengesService.name)
 
     async save(entity: Challenge) {
+        try {
 
-        const players = await this.playerService.get()
+            const challenge = new this.model(entity)
+            challenge.dateHourRequest = new Date()
 
-        entity.players.map(player => {
+            challenge.status = ChallengeStatus.PENDENT
 
-            const existPlayer = players.filter(player => player._id == player._id)
+            this.logger.log(`challenge save: ${JSON.stringify(challenge)}`)
 
-            if (existPlayer.length === 0) throw new BadRequestException(`O id ${player._id} não é jogador`)
-        })
+            return await challenge.save()
 
-        const requesterExistsInMatch = entity.players.filter(player => player._id == entity.requester)
-
-        this.logger.log(`requesterExistsInMatch: ${requesterExistsInMatch}`)
-
-        if (requesterExistsInMatch.length == 0) {
-            throw new BadRequestException(`O solicitante deve ser um jogador da partida`)
+        } catch (error) {
+            this.logger.error(`error: ${JSON.stringify(error)}`)
+            throw new RpcException(error.message)
         }
-
-        const categoryPlayer = await this.categoryService.findByUserId(entity.requester, players)
-
-        const challengeToSaved = new this.model(entity)
-        challengeToSaved.category = categoryPlayer.id
-        challengeToSaved.dateHourRequest = new Date()
-        this.logger.log(`challengeToSaved.dateHourChallenge: ${challengeToSaved.dateHourChallenge} `)
-
-        challengeToSaved.status = ChallengeStatus.PENDENT
-        this.logger.log(`Challenge create: ${JSON.stringify(challengeToSaved)}`)
-
-        return await challengeToSaved.save()
-
     }
 
     async getAll(): Promise<Array<Challenge>> {
-        return this.model.find()
-        .populate('players')
-        .populate('requester')
-        .populate('match')
-        .exec()
+        try {
+            return await this.model.find().exec()
+        } catch (error) {
+            this.logger.error(`error: ${JSON.stringify(error.message)}`)
+            throw new RpcException(error.message)
+        }
+
     }
 
     async getByJogadorId(_id: any): Promise<Array<Challenge>> {
-        const players = await this.playerService.get()
-
-        const playerFilter = players.filter(player => player._id == _id)
-
-        if(playerFilter.length == 0) throw new BadRequestException(`O id: ${_id} não é um jogador`)
-
-        return await this.model.find()
-        .where('players')
-        .in(_id)        
-        .populate('players')
-        .populate('requester')
-        .populate('match')
-        .exec()
+        try {
+            return await this.model.find()
+                .where('players')
+                .in(_id)
+                .exec()
+        } catch (error) {
+            this.logger.error(`error: ${JSON.stringify(error.message)}`)
+            throw new RpcException(error.message)
+        }
     }
+
+    async getChallengeById(_id: any): Promise<Challenge> {
+        try {
+            return await this.model.findOne({ _id }).exec();
+        } catch (error) {
+            this.logger.error(`error: ${JSON.stringify(error.message)}`)
+            throw new RpcException(error.message)
+        }
+    }
+
+    async updateChallenge(_id: string, entity: Challenge): Promise<void> {
+        try {
+            entity.dateHourResponse = new Date()
+            await this.model.findOneAndUpdate({ _id }, { $set: entity }).exec()
+        } catch (error) {
+            this.logger.error(`error: ${JSON.stringify(error.message)}`)
+            throw new RpcException(error.message)
+        }
+    }
+
+    async updateChallengeMatch(idMatch: string, entity: Challenge): Promise<void> {
+        try {
+            entity.status = ChallengeStatus.REALIZED
+            entity.match = idMatch
+            await this.model.findOneAndUpdate({ _id: entity._id }, { $set: entity }).exec()
+        } catch (error) {
+            this.logger.error(`error: ${JSON.stringify(error.message)}`)
+            throw new RpcException(error.message)
+        }
+    }
+
+    async deleteChallenge(entity: Challenge): Promise<void> {
+        try {
+            const { _id } = entity
+            
+            entity.status = ChallengeStatus.CANCELED
+            this.logger.log(`challenge: ${JSON.stringify(entity)}`)
+            await this.model.findOneAndUpdate({_id},{$set: entity}).exec() 
+        } catch (error) {
+            this.logger.error(`error: ${JSON.stringify(error.message)}`)
+            throw new RpcException(error.message)
+        }
+    }
+
+
+
 
 }
