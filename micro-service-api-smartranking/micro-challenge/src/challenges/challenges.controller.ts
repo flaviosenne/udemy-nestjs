@@ -41,10 +41,10 @@ export class ChallengesController {
         const originalMsg = context.getMessage()
 
         try {
-            const { idPlayer, _id } = data
+            const { playerId, _id } = data
             this.logger.log(`data: ${JSON.stringify(data)}`)
 
-            if (idPlayer) return await this.service.getByJogadorId(idPlayer)
+            if (playerId) return await this.service.getByJogadorId(playerId)
 
             return _id ?
                 await this.service.getByJogadorId(_id) :
@@ -89,7 +89,7 @@ export class ChallengesController {
             this.logger.log(`data: ${data}`)
             const idMatch: string = data.idMatch
             const challenge: Challenge = data.challenge
-            await this.service.updateChallengeMatch(idMatch, challenge)
+            await this.service.addChallengeMatch(idMatch, challenge)
             await channel.ack(originalMsg)
         } catch (error) {
             const filterAckError = ackErrors.filter(

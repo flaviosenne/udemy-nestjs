@@ -72,7 +72,7 @@ export class ChallengesService {
         }
     }
 
-    async updateChallengeMatch(idMatch: string, entity: Challenge): Promise<void> {
+    async addChallengeMatch(idMatch: string, entity: Challenge): Promise<void> {
         try {
             entity.status = ChallengeStatus.REALIZED
             entity.match = idMatch
