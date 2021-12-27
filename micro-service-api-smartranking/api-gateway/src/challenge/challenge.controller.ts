@@ -102,12 +102,12 @@ export class ChallengeController {
         this.logger.log(`challenge: ${JSON.stringify(challenge)}`)
 
         if(!challenge) throw new BadRequestException('Desafio não encontrado')
-
+        
         if(challenge['status'] == ChallengeStatus.REALIZED) throw new BadRequestException('Desafio já realizado')
         
         if(challenge['status'] != ChallengeStatus.ACCEPT) throw new BadRequestException('Partidas somente podem ser lançadas em dasfios aceitos pelos adversários')
-    
-        if(!challenge['players'].include(dto.def)) throw new BadRequestException('O jogador vencedor da partida deve fazer parte do desafio') 
+        
+        if(!challenge['players'].includes(dto.def)) throw new BadRequestException('O jogador vencedor da partida deve fazer parte do desafio') 
     
         const match: any = {}
         match.category = challenge['category']

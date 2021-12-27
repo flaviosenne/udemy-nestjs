@@ -24,7 +24,7 @@ export class MatchsService {
                 this.logger.log(`result: ${JSON.stringify(result)}`)
                 const idMatch = result._id
 
-                const challenge = this.proxyChallenge.send('get-challenges', {playerId: '', _id: entity['chalenge']})
+                const challenge = await this.proxyChallenge.send('get-challenges', {playerId: '', _id: entity['chalenge']}).toPromise()
 
                 return await this.proxyChallenge.emit('update-challenge-match', {idMatch, challenge}).toPromise()
             }catch(error){
