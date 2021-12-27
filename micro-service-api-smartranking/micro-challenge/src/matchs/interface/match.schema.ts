@@ -1,11 +1,12 @@
 import { Schema, Types } from "mongoose";
 
 export const MatchSchema = new Schema({
-    category: {type: String},
+    category: {type:Types.ObjectId, ref: 'Category' },
+    challenge: {type:Types.ObjectId, ref: 'Challenge' },
     jogadores: [
-        { type: Types.ObjectId, ref: 'Jogador'}
+        { type: Types.ObjectId, ref: 'Player'}
     ],
-    def: { type: Types.ObjectId, ref: 'Jogador' },
+    def: { type: Types.ObjectId, ref: 'Player' },
     result: [ 
         { set: {type: String} } 
     ]
