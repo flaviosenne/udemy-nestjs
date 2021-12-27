@@ -47,7 +47,7 @@ export class ChallengesController {
             if (playerId) return await this.service.getByJogadorId(playerId)
 
             return _id ?
-                await this.service.getByJogadorId(_id) :
+                await this.service.getChallengeById(_id) :
                 await this.service.getAll()
 
         } catch (error) {
@@ -57,7 +57,7 @@ export class ChallengesController {
         }
     }
 
-    @EventPattern('update-chalenge')
+    @EventPattern('update-challenge')
     async updateChallenge(@Payload() data: any, @Ctx() context: RmqContext) {
 
         const channel = context.getChannelRef()

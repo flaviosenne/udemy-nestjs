@@ -23,7 +23,7 @@ export class ChallengeController {
     async save(@Body() dto: CreateChallengeDto){
         this.logger.log(`create challenge: ${JSON.stringify(dto)}`)
 
-        const players: any = this.queueProxyAdminBackEnd.send('get-players', '')
+        const players: any = await this.queueProxyAdminBackEnd.send('get-players', '').toPromise()
 
         dto.players.map(playerDto => {
             const playerFilter = players.filter(player => player._id == playerDto._id)
@@ -41,7 +41,7 @@ export class ChallengeController {
 
         if(requesterIsPlayerMatch.length == 0) throw new BadRequestException(`O solicitante deve ser um jogador da partida`)
 
-        const category = this.queueProxyAdminBackEnd.send('get-categories', dto.category)
+        const category = await this.queueProxyAdminBackEnd.send('get-categories', dto.category).toPromise()
 
         this.logger.log(`category: ${JSON.stringify(category)}`)
 
@@ -51,23 +51,22 @@ export class ChallengeController {
     }
 
     @Get()
-    get(@Query('playerId') playerId: string){
+    async get(@Query('playerId') playerId: string){
         if(playerId){
-            const player = this.queueProxyAdminBackEnd.send('get-players', playerId)
-            this.logger.log(`plyaer: ${JSON.stringify(player)}`)
+            const player = await this.queueProxyAdminBackEnd.send('get-players', playerId).toPromise()
+            this.logger.log(`player: ${JSON.stringify(player)}`)
             if(!player) throw new BadRequestException('Jogador não cadastrado')
         }
         return this.queueProxyChallenge.send('get-challenges', {playerId, _id: ''})
 
     }
 
-    @Put('/:challenge-id')
+    @Put('/:challengeId')
     async updateChallenge(
         @Body(ChallengeStatusValidationPipe) dto: UpdateChallengeDto,
-        @Param('challenge-id') _id: string
+        @Param('challengeId') _id: string
     ){
-
-        const challenge = this.queueProxyChallenge.send('get-challenges', {playerId: '', _id})
+        const challenge = await this.queueProxyChallenge.send('get-challenges', {playerId: '', _id}).toPromise()
 
         this.logger.log(`challenge: ${JSON.stringify(challenge)}`)
 
@@ -83,7 +82,7 @@ export class ChallengeController {
         @Param('id') _id: string
     ){
 
-        const challenge = this.queueProxyChallenge.send('get-challenges', {playerId: '', _id})
+        const challenge = await this.queueProxyChallenge.send('get-challenges', {playerId: '', _id}).toPromise()
 
         this.logger.log(`challenge: ${JSON.stringify(challenge)}`)
 
@@ -92,13 +91,13 @@ export class ChallengeController {
         this.queueProxyChallenge.emit('delete-challenge', challenge)
     }
 
-    @Post('/:challenge-id/match')
+    @Post('/:challengeId/match')
     async addChallengeMatch(
         @Body(ValidationPipe) dto: AddChallengeMatchDto,
-        @Param('challenge-id') _id: string
+        @Param('challengeId') _id: string
     ){
 
-        const challenge = this.queueProxyChallenge.send('get-challenges', {playerId: '', _id})
+        const challenge = await this.queueProxyChallenge.send('get-challenges', {playerId: '', _id}).toPromise()
 
         this.logger.log(`challenge: ${JSON.stringify(challenge)}`)
 
