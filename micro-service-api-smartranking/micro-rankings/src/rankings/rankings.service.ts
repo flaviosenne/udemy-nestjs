@@ -1,6 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { ClientProxySmartRanking } from 'src/proxymq/client-proxy';
+import { Category } from './interfaces/categoy.interface';
+import { EventName } from './interfaces/event-name.enum';
 import { Match } from './interfaces/match.interface';
 import { Ranking } from './interfaces/ranking.schema';
 
@@ -8,36 +12,52 @@ import { Ranking } from './interfaces/ranking.schema';
 export class RankingsService {
 
     constructor(
-        @InjectModel('Ranking') private model: Model<Ranking>
+        @InjectModel('Ranking') private model: Model<Ranking>,
+        private readonly proxy: ClientProxySmartRanking
 
     ){}
 
     private readonly logger = new Logger(RankingsService.name)
+    private readonly proxyAdminBackend = this.proxy.getClientProxyAdminBackEndInstance()
 
     async proccessMatch(idMatch: string, match: Match): Promise<void>{
-        this.logger.log(`idMatch: ${idMatch} match: ${JSON.stringify(match)}`)
+        
+        try{
 
-        match.players.map(player => {
-            const ranking = new this.model()
+            const category: Category = await this.proxyAdminBackend.send('get-categories', match.category).toPromise()
+            
+            await Promise.all(match.players.map(async player => {
+                const ranking = new this.model()
+    
+                ranking.category = match.category
+                ranking.challenge = match.challenge
+                ranking.match = idMatch
+                ranking.player = player
+    
+                if(player == match.def){
+                    const eventFilter = category.events.filter(event => event.name == EventName.VICTORY)
+                    
+                    ranking.event = EventName.VICTORY
+                    ranking.points = eventFilter[0].value
+                    ranking.operation = eventFilter[0].operation
+                }else{
+                    const eventFilter = category.events.filter(event => event.name == EventName.DEFEAT)
+                    
+                    ranking.event = EventName.DEFEAT
+                    ranking.points = eventFilter[0].value
+                    ranking.operation = eventFilter[0].operation
+                }
+    
+                this.logger.log(`ranking: ${JSON.stringify(ranking)}`)
+    
+                await ranking.save()
+            }))
 
-            ranking.category = match.category
-            ranking.challenge = match.challenge
-            ranking.match = idMatch
-            ranking.player = player
+        }catch(error){
+            this.logger.error(`error: ${JSON.stringify(error.message)}`)
 
-            if(player == match.def){
-                ranking.event = 'VITORIA'
-                ranking.points = 30
-                ranking.operation = '+'
-            }else{
-                ranking.event = 'DERROTA'
-                ranking.points = 0
-                ranking.operation = '+'
-            }
-
-            this.logger.log(`ranking: ${JSON.stringify(ranking)}`)
-
-            ranking.save()
-        })
+            throw new RpcException(error.message)
+        }
+        
     }
 }
