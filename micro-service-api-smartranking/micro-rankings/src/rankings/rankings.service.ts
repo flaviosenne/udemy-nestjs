@@ -6,6 +6,7 @@ import { ClientProxySmartRanking } from 'src/proxymq/client-proxy';
 import { Category } from './interfaces/categoy.interface';
 import { EventName } from './interfaces/event-name.enum';
 import { Match } from './interfaces/match.interface';
+import { RankingResponse } from './interfaces/ranking-response.interface';
 import { Ranking } from './interfaces/ranking.schema';
 
 @Injectable()
@@ -59,5 +60,18 @@ export class RankingsService {
             throw new RpcException(error.message)
         }
         
+    }
+
+    async getRankings(categoryId: any, dateRef: string): Promise<RankingResponse[] | RankingResponse>{
+
+        try{
+            this.logger.log(`catgoryId ${categoryId} dateRef: ${dateRef}`)
+
+            return
+
+        }catch(error){
+            this.logger.error(`error: ${JSON.stringify(error.message)}`)
+            throw new RpcException(error.message)
+        }
     }
 }

@@ -31,7 +31,6 @@
     "aws-sdk": "^2.1043.0",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
-    "moment-timezone": "^0.5.33",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0"

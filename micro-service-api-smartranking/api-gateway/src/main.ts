@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import {CustomExceptionsFilter} from './common/filters/http-exception.filter'
-import * as momentTimezone from 'moment-timezone'
 import {LoggingInterceptor }from './common/interceptors/logging.interceptor'
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 async function bootstrap() {
@@ -13,12 +12,6 @@ async function bootstrap() {
   
   app.useGlobalFilters(new CustomExceptionsFilter())
   
-  Date.prototype.toJSON = function(): any{
-    return momentTimezone(this)
-    .tz('America/Sao_Paulo')
-    .format('YYY-MM-DD HH:mm:ss.SSS')
-  } 
-
   await app.listen(8090);
 }
 bootstrap();
