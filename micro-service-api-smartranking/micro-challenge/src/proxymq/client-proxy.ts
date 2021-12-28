@@ -30,4 +30,17 @@ export class ClientProxySmartRanking {
             }
         })
     }
+
+    
+    getClientProxyRankingInstance(): ClientProxy {
+   
+        return ClientProxyFactory.create({
+            transport: Transport.RMQ,
+            options: {
+                urls:[`amqps://${this.RABBITMQ_USER}:${this.RABBITMQ_PASSWORD}@${this.RABBITMQ_URL}`],
+                queue: 'ranking'
+            }
+        })
+    }
+
 }

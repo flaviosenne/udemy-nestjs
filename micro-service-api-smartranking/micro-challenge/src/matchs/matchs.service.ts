@@ -14,6 +14,7 @@ export class MatchsService {
 
         private readonly logger = new Logger(MatchsService.name)
         private proxyChallenge = this.proxy.getClientProxyChallengeInstance()
+        private proxyRanking = this.proxy.getClientProxyRankingInstance()
 
         async save(entity: Math): Promise<Match>{
             try{
@@ -26,7 +27,10 @@ export class MatchsService {
 
                 const challenge = await this.proxyChallenge.send('get-challenges', {playerId: '', _id: entity['challenge']}).toPromise()
 
-                return await this.proxyChallenge.emit('update-challenge-match', {idMatch, challenge}).toPromise()
+                await this.proxyChallenge.emit('update-challenge-match', {idMatch, challenge}).toPromise()
+            
+                return await this.proxyRanking.emit('proccess-match', {idMatch, match}).toPromise()
+            
             }catch(error){
                 this.logger.error(`error: ${JSON.stringify(error.message)}`)
                 throw new RpcException(error.message)
