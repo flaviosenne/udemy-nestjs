@@ -30,7 +30,7 @@ export class ChallengesController {
             const filterAckError = ackErrors.filter(
                 ackError => e.message.includes(ackError))
 
-            if (filterAckError) await channel.ack(originalMsg)
+            if (filterAckError.length > 0) await channel.ack(originalMsg)
 
         }
     }

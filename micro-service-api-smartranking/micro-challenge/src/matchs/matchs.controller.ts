@@ -21,7 +21,7 @@ export class MatchsController {
             this.logger.error(`error: ${JSON.stringify(error.message)}`)
             const filterAck = ackErrors.filter(ackError => error.message.includes(ackError))
 
-            if(filterAck) await channel.ack(originalMsg)
+            if(filterAck.length > 0) await channel.ack(originalMsg)
         }
     }
 }
