@@ -2,12 +2,15 @@ import { Injectable, Logger } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import * as _ from 'lodash'
 import { ClientProxySmartRanking } from 'src/proxymq/client-proxy';
 import { Category } from './interfaces/categoy.interface';
 import { EventName } from './interfaces/event-name.enum';
 import { Match } from './interfaces/match.interface';
 import { RankingResponse } from './interfaces/ranking-response.interface';
 import { Ranking } from './interfaces/ranking.schema';
+import * as moment from 'moment-timezone'
+import { Challenge } from './interfaces/challenge.interface';
 
 @Injectable()
 export class RankingsService {
@@ -20,6 +23,7 @@ export class RankingsService {
 
     private readonly logger = new Logger(RankingsService.name)
     private readonly proxyAdminBackend = this.proxy.getClientProxyAdminBackEndInstance()
+    private readonly proxyChallenge = this.proxy.getClientProxyChallengeInstance()
 
     async proccessMatch(idMatch: string, match: Match): Promise<void>{
         
@@ -66,6 +70,22 @@ export class RankingsService {
 
         try{
             this.logger.log(`catgoryId ${categoryId} dateRef: ${dateRef}`)
+
+            if(!dateRef){
+                dateRef = moment().tz('America/Sao_Paulo').format('YYYY-MM-DD')
+                this.logger.log(`dateRef: ${dateRef}`)
+            }
+
+            const resultRankings = await this.model.find()
+            .where('category')
+            .equals(categoryId)
+            .exec()
+
+            this.logger.log(`resultRankings: ${JSON.stringify(resultRankings)}`)
+
+            const challenges: Challenge[] = await this.proxyChallenge.send('get-challenges-realized',{categoryId, dateRef}).toPromise()
+            
+            _
 
             return
 

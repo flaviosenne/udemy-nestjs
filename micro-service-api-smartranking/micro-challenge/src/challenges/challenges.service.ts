@@ -1,6 +1,7 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
+import * as moment from 'moment-timezone';
 import { Model } from 'mongoose';
 import { ChallengeStatus } from './interface/challenge-status.enum';
 import { Challenge } from './interface/challenge.interface';
@@ -91,6 +92,41 @@ export class ChallengesService {
             this.logger.log(`challenge: ${JSON.stringify(entity)}`)
             await this.model.findOneAndUpdate({_id},{$set: entity}).exec() 
         } catch (error) {
+            this.logger.error(`error: ${JSON.stringify(error.message)}`)
+            throw new RpcException(error.message)
+        }
+    }
+
+    
+    async getChallengesRealized(categoryId: string){
+        try{
+            return await this.model.find()
+            .where('category')
+            .equals(categoryId)
+            .where('status')
+            .equals(ChallengeStatus.REALIZED)
+            .exec()
+        }catch(error){
+            this.logger.error(`error: ${JSON.stringify(error.message)}`)
+            throw new RpcException(error.message)
+        }
+    }
+
+    async getChallengesReliazedByDate(categoryId: string, dateRef: string){
+        try{
+            const dateRefNew = `${dateRef} 23:59:59.999`
+            const dateFormatted = moment(dateRefNew).tz('UTC').format('YYYY-MM-DD HH:mm:ss')
+            this.logger.log(`dateFormatted: ${dateFormatted}`)
+
+            return await this.model.find()
+            .where('category')
+            .equals(categoryId)
+            .where('status')
+            .equals(ChallengeStatus.REALIZED)
+            .where('dateHourChallenge')
+            .lte(new Date(dateFormatted).getTime())
+            .exec()
+        }catch(error){
             this.logger.error(`error: ${JSON.stringify(error.message)}`)
             throw new RpcException(error.message)
         }

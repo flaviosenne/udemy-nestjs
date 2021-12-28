@@ -117,4 +117,21 @@ export class ChallengesController {
 
         }
     }
+
+    @MessagePattern('get-challenges-realized')
+    async getChallengesReliazed(@Payload() data: any, @Ctx() context: RmqContext){
+        const channel = context.getChannelRef()
+        const originalMsg = context.getMessage()
+        try{
+            const {categoryId, dataRef} = data
+            this.logger.log(`data: ${JSON.stringify(data)}`)
+            
+            return dataRef ? 
+            await this.service.getChallengesReliazedByDate(categoryId, dataRef):
+            await this.service.getChallengesRealized(categoryId)
+
+        }finally{
+            await channel.ack(originalMsg)
+        }
+    }
 }
