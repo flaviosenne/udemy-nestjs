@@ -118,14 +118,15 @@ export class ChallengesService {
             const dateFormatted = moment(dateRefNew).tz('UTC').format('YYYY-MM-DD HH:mm:ss')
             this.logger.log(`dateFormatted: ${dateFormatted}`)
 
-            return await this.model.find()
-            .where('category')
-            .equals(categoryId)
-            .where('status')
-            .equals(ChallengeStatus.REALIZED)
-            .where('dateHourChallenge')
-            .lte(new Date(dateFormatted).getTime())
+            const result = await this.model.find({
+                category: categoryId, 
+                status: ChallengeStatus.REALIZED, 
+                dateHourChallenge: {$lt: dateFormatted}})
             .exec()
+
+            this.logger.log(`result: ${JSON.stringify(result)}`)
+
+            return result
         }catch(error){
             this.logger.error(`error: ${JSON.stringify(error.message)}`)
             throw new RpcException(error.message)

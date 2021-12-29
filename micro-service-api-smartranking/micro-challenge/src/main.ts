@@ -16,7 +16,7 @@ async function bootstrap() {
   Date.prototype.toJSON = function(): any{
     return momentTimezone(this)
     .tz('America/Sao_Paulo')
-    .format('YYY-MM-DD HH:mm:ss.SSS')
+    .format('YYYY-MM-DD HH:mm:ss.SSS')
   } 
 
   await app.listen();

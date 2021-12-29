@@ -81,13 +81,41 @@ export class RankingsService {
             .equals(categoryId)
             .exec()
 
-            this.logger.log(`resultRankings: ${JSON.stringify(resultRankings)}`)
-
             const challenges: Challenge[] = await this.proxyChallenge.send('get-challenges-realized',{categoryId, dateRef}).toPromise()
             
-            _
 
-            return
+            _.remove(resultRankings, function(item){
+                return challenges.filter(challenge => challenge._id == item.challenge).length == 0
+            })
+
+            this.logger.log(`resultRankings: ${JSON.stringify(resultRankings)}`)
+
+            const result = 
+            _(resultRankings)
+            .groupBy('player')
+            .map((items, key)=>({
+                'player':key,
+                'history':_.countBy(items, 'event'),
+                'points':_.sumBy(items, 'points')
+            }))
+            .orderBy('points', 'desc')
+            .value()
+
+            this.logger.log(`result: ${JSON.stringify(result)}`)
+
+            const rankingResponse: RankingResponse[] = result.map((item, index)=>{
+                return {
+                    matchHistory: {
+                        victory: item.history['VITORIA'] ? item.history['VITORIA'] : 0,
+                        defeat: item.history['DERROTA'] ? item.history['DERROTA']: 0,
+                     },
+                    player: item.player,
+                    points: item.points,
+                    position: index+1
+                }
+            })
+
+            return rankingResponse
 
         }catch(error){
             this.logger.error(`error: ${JSON.stringify(error.message)}`)

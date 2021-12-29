@@ -123,11 +123,11 @@ export class ChallengesController {
         const channel = context.getChannelRef()
         const originalMsg = context.getMessage()
         try{
-            const {categoryId, dataRef} = data
+            const {categoryId, dateRef} = data
             this.logger.log(`data: ${JSON.stringify(data)}`)
             
-            return dataRef ? 
-            await this.service.getChallengesReliazedByDate(categoryId, dataRef):
+            return dateRef ? 
+            await this.service.getChallengesReliazedByDate(categoryId, dateRef):
             await this.service.getChallengesRealized(categoryId)
 
         }finally{
