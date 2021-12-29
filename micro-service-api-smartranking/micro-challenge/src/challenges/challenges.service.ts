@@ -3,6 +3,7 @@ import { RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import * as moment from 'moment-timezone';
 import { Model } from 'mongoose';
+import { ClientProxySmartRanking } from 'src/proxymq/client-proxy';
 import { ChallengeStatus } from './interface/challenge-status.enum';
 import { Challenge } from './interface/challenge.interface';
 
@@ -10,9 +11,13 @@ import { Challenge } from './interface/challenge.interface';
 export class ChallengesService {
     constructor(
         @InjectModel('Challenge')
-        private readonly model: Model<Challenge>) { }
+        private readonly model: Model<Challenge>,
+        private proxy: ClientProxySmartRanking) { }
 
-    logger: Logger = new Logger(ChallengesService.name)
+
+    private readonly logger: Logger = new Logger(ChallengesService.name)
+
+    private readonly proxyNotification = this.proxy.getClientProxyNotificationInstance()
 
     async save(entity: Challenge) {
         try {
@@ -24,7 +29,10 @@ export class ChallengesService {
 
             this.logger.log(`challenge save: ${JSON.stringify(challenge)}`)
 
-            return await challenge.save()
+            await challenge.save()
+
+            return await this.proxyNotification
+            .emit('notification-new-challenge',challenge).toPromise()
 
         } catch (error) {
             this.logger.error(`error: ${JSON.stringify(error)}`)
