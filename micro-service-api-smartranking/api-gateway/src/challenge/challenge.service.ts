@@ -44,13 +44,13 @@ export class ChallengeService {
         this.queueProxyChallenge.emit('create-challenge', dto)
     }
 
-    async get(playerId: string) {
+    async get(playerId: string): Promise<any> {
         if (playerId) {
             const player = await this.queueProxyAdminBackEnd.send('get-players', playerId).toPromise()
             this.logger.log(`player: ${JSON.stringify(player)}`)
             if (!player) throw new BadRequestException('Jogador não cadastrado')
         }
-        return this.queueProxyChallenge.send('get-challenges', { playerId, _id: '' })
+        return await this.queueProxyChallenge.send('get-challenges', { playerId, _id: '' }).toPromise()
 
     }
 
@@ -63,7 +63,7 @@ export class ChallengeService {
 
         if (challenge['status'] != ChallengeStatus.PENDENT) throw new BadRequestException('Somente desafios com status PENDENTE podem ser atualizados')
 
-        this.queueProxyChallenge.emit('update-challenge', { _id, challenge: dto })
+        await this.queueProxyChallenge.emit('update-challenge', { _id, challenge: dto }).toPromise()
     }
 
     async deleteChallenge(_id: string) {
@@ -74,7 +74,7 @@ export class ChallengeService {
 
         if (!challenge) throw new BadRequestException('Desafio não encontrado')
 
-        this.queueProxyChallenge.emit('delete-challenge', challenge)
+        await this.queueProxyChallenge.emit('delete-challenge', challenge).toPromise()
     }
 
     async addChallengeMatch(dto: AddChallengeMatchDto, _id: string) {
@@ -98,7 +98,7 @@ export class ChallengeService {
         match.players = challenge['players']
         match.result = dto.result
 
-        this.queueProxyChallenge.emit('create-match', match)
+        await this.queueProxyChallenge.emit('create-match', match).toPromise()
     }
 
 }

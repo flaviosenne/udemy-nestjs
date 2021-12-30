@@ -13,12 +13,12 @@ export class ChallengeController {
     @Post()
     @UsePipes(ValidationPipe)
     async save(@Body() dto: CreateChallengeDto){
-        this.service.save(dto)
+        await this.service.save(dto)
     }
 
     @Get()
     async get(@Query('playerId') playerId: string){
-        return this.service.get(playerId)
+        return await this.service.get(playerId)
     }
 
     @Put('/:challengeId')
@@ -26,12 +26,12 @@ export class ChallengeController {
         @Body(ChallengeStatusValidationPipe) dto: UpdateChallengeDto,
         @Param('challengeId') _id: string
     ){
-       this.service.updateChallenge(dto, _id)
+       await this.service.updateChallenge(dto, _id)
     }
     
     @Put('/:id')
     async deleteChallenge(@Param('id') _id: string){
-        this.service.deleteChallenge(_id)
+        await this.service.deleteChallenge(_id)
     }
 
     @Post('/:challengeId/match')
@@ -39,7 +39,7 @@ export class ChallengeController {
         @Body(ValidationPipe) dto: AddChallengeMatchDto,
         @Param('challengeId') _id: string
     ){
-      this.service.addChallengeMatch(dto,_id)
+      await this.service.addChallengeMatch(dto,_id)
     }
 
 }

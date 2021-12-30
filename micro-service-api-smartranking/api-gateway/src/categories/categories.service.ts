@@ -15,8 +15,8 @@ export class CategoriesService {
     }
 
 
-    get(_id: string): Observable<any> {
-        return this.queueProxy.send('get-categories', _id ? _id : '')
+    async get(_id: string): Promise<any> {
+        return await this.queueProxy.send('get-categories', _id ? _id : '').toPromise()
     }
 
     update(dto: UpdateCategoryDto, id: string) {

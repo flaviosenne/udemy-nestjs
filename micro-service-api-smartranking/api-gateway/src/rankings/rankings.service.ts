@@ -7,10 +7,10 @@ export class RankingsService {
 
     private readonly proxyAdminBackEnd = this.proxy.getClientProxyRankingInstance()
 
-    async getRankings(categoryId: string, dateRef: string,) {
+    async getRankings(categoryId: string, dateRef: string): Promise<any> {
 
         if (!categoryId) throw new BadRequestException('O id da categoria é obrigatório')
 
-        return this.proxyAdminBackEnd.send('get-rankings', { categoryId, dateRef: dateRef ? dateRef : '' })
+        return await this.proxyAdminBackEnd.send('get-rankings', { categoryId, dateRef: dateRef ? dateRef : '' }).toPromise()
     }
 }

@@ -12,20 +12,20 @@ export class PlayersController {
 
     @Post()
     @UsePipes(ValidationPipe)
-    save(@Body() dto: CreatePlayerDto) {
-        this.service.save(dto)
+    async save(@Body() dto: CreatePlayerDto) {
+        await this.service.save(dto)
     }
 
 
     @Get()
-    get(@Query('idPlayer') _id: string): Observable<any> {
-        return this.service.get(_id)
+    async get(@Query('idPlayer') _id: string) {
+        return await this.service.get(_id)
     }
 
     @Put('/:_id')
     @UsePipes(ValidationPipe)
-    update(@Body() dto: UpdatePlayerDto,@Param('_id') id: string) {
-        this.service.update(dto, id)
+    async update(@Body() dto: UpdatePlayerDto,@Param('_id') id: string) {
+        await this.service.update(dto, id)
     }
 
     @Delete('/:_id')
@@ -37,6 +37,6 @@ export class PlayersController {
     @Post('/:id/upload')
     @UseInterceptors(FileInterceptor('file'))
     async uploadFile(@UploadedFile() file, @Param('id') id: string){
-        return this.service.uploadFile(file, id)
+        return await this.service.uploadFile(file, id)
     }
 }

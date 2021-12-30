@@ -6,25 +6,25 @@ import { CategoriesService } from './categories.service';
 
 @Controller('api/v1/categories')
 export class CategoriesController {
-    constructor(private service: CategoriesService) {}
+    constructor(private service: CategoriesService) { }
 
     @Post()
     @UsePipes(ValidationPipe)
-    save( @Body() dto: CreateCategoryDto){
+    save(@Body() dto: CreateCategoryDto) {
         this.service.save(dto)
     }
 
 
     @Get()
-    get(@Query('idCategory')_id:string): Observable<any>{
-        return this.service.get(_id)
+    async get(@Query('idCategory') _id: string) {
+        return await this.service.get(_id)
     }
 
     @Put('/:_id')
     @UsePipes(ValidationPipe)
     update(
         @Body() dto: UpdateCategoryDto,
-        @Param('_id') id: string){
+        @Param('_id') id: string) {
         this.service.update(dto, id)
     }
 }

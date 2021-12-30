@@ -11,6 +11,6 @@ export class RankingsController {
         @Query('categoryId') categoryId: string,
         @Query('dateRef') dateRef: string,
     ) {
-        return this.service.getRankings(categoryId, dateRef)
+        return await this.service.getRankings(categoryId, dateRef)
     }
 }

@@ -17,10 +17,10 @@ export class PlayersService {
         .getClientProxyAdminBackEndInstance()
 
 
-    save(dto: CreatePlayerDto) {
+    async save(dto: CreatePlayerDto) {
         this.logger.log(`create player: ${JSON.stringify(dto)}`)
 
-        const category = this.queueProxy.send('get-categories', dto.category)
+        const category = await this.queueProxy.send('get-categories', dto.category).toPromise()
 
         if (!category) throw new BadRequestException(`Categoria não cadastrada`)
 
@@ -28,12 +28,12 @@ export class PlayersService {
     }
 
 
-    get(_id: string): Observable<any> {
-        return this.queueProxy.send('get-players', _id ? _id : '')
+    async get(_id: string): Promise<any> {
+        return await this.queueProxy.send('get-players', _id ? _id : '').toPromise()
     }
 
-    update(dto: UpdatePlayerDto, id: string) {
-        const category = this.queueProxy.send('get-categories', dto.category)
+    async update(dto: UpdatePlayerDto, id: string) {
+        const category = await this.queueProxy.send('get-categories', dto.category).toPromise()
 
         if (!category) throw new BadRequestException(`Categoria não cadastrada`)
 
@@ -46,7 +46,7 @@ export class PlayersService {
 
     async uploadFile(file, id: string) {
 
-        const player = this.queueProxy.send('get-players', id)
+        const player = await this.queueProxy.send('get-players', id).toPromise()
 
         if (!player) throw new BadRequestException('Jogador não encontrado')
 
