@@ -14,8 +14,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -23,16 +21,16 @@ public class AuthController {
 
     private final AuthService service;
 
-    @RabbitListener(queues = RabbitConstants.AUTH_QUEUE,id = "register-user")
+    @RabbitListener(queues = RabbitConstants.AUTH_QUEUE,group = ":register-user")
     public void register(@Payload ConsumerListenDto<RegisterDto> dto, Message message, Channel channel){
         log.info("register: {}", dto.getData());
         service.register(dto.getData());
 
     }
-
-    @RabbitListener(queues = RabbitConstants.AUTH_QUEUE, id = "login")
-    public ResponseLoginDto login(@Payload ConsumerListenDto<LoginDto> dto,Message message, Channel channel){
-        log.info("login: {}", dto.getData());
-        return service.login(dto.getData());
-    }
+//
+//    @RabbitListener(queues = RabbitConstants.AUTH_QUEUE, id = "login")
+//    public ResponseLoginDto login(@Payload ConsumerListenDto<LoginDto> dto,Message message, Channel channel){
+//        log.info("login: {}", dto.getData());
+//        return service.login(dto.getData());
+//    }
 }
