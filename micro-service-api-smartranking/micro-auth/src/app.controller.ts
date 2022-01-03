@@ -23,16 +23,14 @@ export class AppController {
     }
   }
 
-  @EventPattern('login')
+  @EventPattern('get-user-login')
   async login(@Payload() dto: AuthLoginDto, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef()
     const originalMsg = context.getMessage()
 
     try{
       this.logger.log(`data: ${JSON.stringify(dto)}`)
-      const result = await this.service.login(dto)
-      this.logger.log(`result: ${result}`)
-      return result
+      return await this.service.getUserLogin(dto)
     }
     catch(e){
       this.logger.error(`error: ${JSON.stringify(e.message)}`)

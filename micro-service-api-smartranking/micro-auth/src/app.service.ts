@@ -2,17 +2,16 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { BcryptService } from './bcrypt/bcrypt.service';
 import { AuthLoginDto } from './dto/auth-login.dto';
 import { AuthRegisterDto } from './dto/auth-register.dto';
 import { User } from './interface/user.interface';
-import bcrypt from 'bcrypt'
-import { passwordMatchers } from './helpers/bcrypt';
-import { generateToken } from './helpers/jwt';
 
 @Injectable()
 export class AppService {
 
-  constructor(@InjectModel('User') private readonly model: Model<User>) { }
+  constructor(@InjectModel('User') private readonly model: Model<User>,
+  private bcrypt: BcryptService) { }
 
   
   async register(dto: AuthRegisterDto) {
@@ -23,32 +22,25 @@ export class AppService {
 
     const user = new this.model(dto)
 
-    const salt = bcrypt.genSaltSync(10)
-    const hash = bcrypt.hashSync(dto.password, salt)
+    const hash = await this.bcrypt.encodePassword(dto.password)
 
+    console.log('hash: ', hash)
     user.password = hash
 
     await user.save()
   }
 
 
-  async login(dto: AuthLoginDto) {
+  async getUserLogin(dto: AuthLoginDto) {
 
     try {
       const existUser = await this.model.findOne({ email: dto.email }).exec()
 
-      if (!existUser || !passwordMatchers(dto.password, existUser.password)) {
+      if (!existUser || !this.bcrypt.passwordMatchers(dto.password, existUser.password)) {
         return {error: 'Credenciais inválidas', result: null}
       }
 
-      const payload = {
-        id: existUser._id,
-        name: existUser.name,
-        email: existUser.email
-      }
-
-      return { result: generateToken(payload), error: null }
-    } catch (error) {
+      } catch (error) {
       throw new RpcException(error.message)
     }
   }

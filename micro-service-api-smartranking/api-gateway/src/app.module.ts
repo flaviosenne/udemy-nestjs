@@ -7,12 +7,14 @@ import {ConfigModule} from '@nestjs/config'
 import { ChallengeModule } from './challenge/challenge.module';
 import { RankingsModule } from './rankings/rankings.module';
 import { AuthModule } from './auth/auth.module';
+import { JsonWebTokenModule } from './jwt/jwt.module';
 
 
 @Module({
   imports: [
     CategoriesModule, PlayersModule, 
     ProxyRMQModule, AwsModule,
+    JsonWebTokenModule,
     ConfigModule.forRoot({isGlobal: true}),
     ChallengeModule,
     RankingsModule,
