@@ -1,5 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { CreatePlayerDto } from 'src/players/dto/create-player.dto';
 import { UpdatePlayerDto } from 'src/players/dto/update-player.dto';
@@ -18,7 +20,8 @@ export class PlayersController {
 
 
     @Get()
-    async get(@Query('idPlayer') _id: string) {
+    async get(@Query('idPlayer') _id: string,@Req() req: Request) {
+        console.log('req: ',req.user)
         return await this.service.get(_id)
     }
 

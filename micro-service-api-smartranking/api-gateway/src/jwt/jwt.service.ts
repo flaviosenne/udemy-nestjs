@@ -1,10 +1,29 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { PassportStrategy } from '@nestjs/passport';
+import { passportJwtSecret } from 'jwks-rsa';
+import { Strategy } from 'passport-local';
 
 @Injectable()
-export class JsonWebTokenService {
+export class JsonWebTokenService extends PassportStrategy(Strategy) {
 
-    constructor(private jwt: JwtService) { }
+    constructor(private jwt: JwtService) { 
+        super(
+            // {
+            // jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+            // ignoreExpiration: false,
+            // audience:  this.authConfig.clientId,
+            // issuer: this.authConfig.authority,
+            // algorithms: ['RS256'],
+            // secretOrKeyProvider:  passportJwtSecret({
+            //     cache: true,
+            //     rateLimit: true,
+            //     jwksRequestsPerMinute: 5,
+            //     jwksUri: `${authConfig.authority}/well-known/jwks.json`
+            // })
+        // }
+        )
+    }
 
     generateToken = (payload: any): string => {
 
@@ -27,5 +46,15 @@ export class JsonWebTokenService {
             return null
         }
     }
+
+    public async validate(payload: any) {
+        const valid = this.tokenValid(payload)
+
+        console.log('chegou ',this.tokenValid(payload))
+        if (!valid) throw new UnauthorizedException();
+        
+        return payload;
+    }
+ 
 
 }

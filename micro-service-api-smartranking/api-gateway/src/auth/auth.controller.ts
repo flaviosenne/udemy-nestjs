@@ -17,7 +17,6 @@ export class AuthController {
     @Post('/register')
     @UsePipes(ValidationPipe)
     async register(@Body() dto: AuthRegisterDto){
-        console.log('dto: ',dto)
         return await this.proxyAuth.send('register-user', dto).toPromise()
         // return await this.awsCoginitoService.registerUser(dto)
     }

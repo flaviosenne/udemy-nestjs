@@ -18,7 +18,7 @@ export class CustomExceptionsFilter implements ExceptionFilter {
         const message = 
         exception instanceof HttpException
         ? exception.getResponse()
-        : exception
+        : exception['message']
 
         this.logger.error(`Http Status: ${status} Erro Message: ${JSON.stringify(message)}`)
  
