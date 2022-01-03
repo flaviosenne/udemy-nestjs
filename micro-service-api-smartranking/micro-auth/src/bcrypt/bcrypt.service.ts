@@ -1,17 +1,10 @@
-import { Injectable } from "@nestjs/common";
-import bcrypt from 'bcrypt'
+import * as bcrypt from 'bcrypt'
 
-@Injectable()
-export class BcryptService {
 
-    constructor(){}
+export const passwordMatchers = (password: string, hash: string): boolean => {
+    return bcrypt.compareSync(password, hash)
+}
 
-    passwordMatchers = (password: string, hash: string): boolean => {
-        return bcrypt.compareSync(password, hash)
-    }
-
-    encodePassword = async (password: string): Promise<string> => {
-        return await bcrypt.hash(password, 12)
-    }
-
+export const encodePassword = async (password: string): Promise<string> => {
+    return await bcrypt.hash(password, 12)
 }
