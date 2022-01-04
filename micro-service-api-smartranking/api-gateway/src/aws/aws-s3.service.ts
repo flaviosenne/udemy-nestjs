@@ -17,6 +17,6 @@ export class AwsS3Service {
 
         const path = `${idPlayer}.${fileExtension}`
 
-        return this.fileService.upload(file.buffer, path)
+        return { url:  this.fileService.upload(file.buffer, path)}
     } 
 }
