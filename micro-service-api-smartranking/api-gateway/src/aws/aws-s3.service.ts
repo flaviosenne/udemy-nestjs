@@ -3,7 +3,7 @@ import { FileService } from './file.protocol';
 import { FileServiceNativeImpl } from './impl/file-native-impl';
 
 @Injectable()
-export class AwsService {
+export class AwsS3Service {
 
     private fileService: FileService
 

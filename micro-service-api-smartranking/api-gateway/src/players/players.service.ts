@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { AwsService } from 'src/aws/aws.service';
+import { AwsS3Service } from 'src/aws/aws-s3.service';
 import { ClientProxySmartRanking } from 'src/proxymq/client-proxy';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import { UpdatePlayerDto } from './dto/update-player.dto';
@@ -9,7 +8,7 @@ import { UpdatePlayerDto } from './dto/update-player.dto';
 export class PlayersService {
     constructor(
         private clientProxySmartRanking: ClientProxySmartRanking,
-        private awsService: AwsService) { }
+        private awsService: AwsS3Service) { }
 
     private logger = new Logger(PlayersService.name)
 

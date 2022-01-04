@@ -1,48 +1,41 @@
 import { FileService } from "../file.protocol";
 import * as AWS from 'aws-sdk'
 import { Logger } from "@nestjs/common";
-import {ConfigService} from '@nestjs/config'
+import { AwsS3Config } from "../config/aws-s3.config";
 
 export class FileServiceAwsImpl implements FileService {
 
     private logger = new Logger(FileServiceAwsImpl.name)
 
-    constructor(private configService: ConfigService){}
+    constructor(private awsS3Confg: AwsS3Config) { }
 
-    upload(buffer: Buffer, path: string) {
-        const AWS_S3_BUCKET_NAME = this.configService.get<string>('AWS_S3_BUCKET_NAME')
-        const AWS_REGION = this.configService.get<string>('AWS_REGION')
-        const AWS_ACCESS_KEY_ID = this.configService.get<string>('AWS_ACCESS_KEY_ID')
-        const AWS_SECRET_ACCESS_KEY = this.configService.get<string>('AWS_SECRET_ACCESS_KEY')
-        
-        
-        const s3 = new AWS.S3({
-            region: AWS_REGION,
-            accessKeyId: AWS_ACCESS_KEY_ID,
-            secretAccessKey: AWS_SECRET_ACCESS_KEY
-        })
+    async upload(buffer: Buffer, path: string) {
+        try {
+            const s3 = new AWS.S3({
+                region: this.awsS3Confg.AWS_REGION,
+                accessKeyId: this.awsS3Confg.AWS_ACCESS_KEY_ID,
+                secretAccessKey: this.awsS3Confg.AWS_SECRET_ACCESS_KEY
+            })
 
-        this.logger.log(`path: ${path}`)
+            this.logger.log(`path: ${path}`)
 
-        const params = {
-            Body: buffer,
-            Bucket: AWS_S3_BUCKET_NAME,
-            Key: path
+            const params = {
+                Body: buffer,
+                Bucket: this.awsS3Confg.AWS_S3_BUCKET_NAME,
+                Key: path
+            }
+
+            const result = await s3.putObject(params).promise()
+            this.logger.log(`result: ${JSON.stringify(result)}`)
+            return {
+                // https://{name-bucket}.s3-{region}.amazonaws.com/{name-file}
+                url: `https://${this.awsS3Confg.AWS_S3_BUCKET_NAME}.s3-${this.awsS3Confg.AWS_REGION}.amazonaws.com/${path}`
+            }
+
+        } catch (error) {
+            this.logger.error(`error: ${JSON.stringify(error.message)}`)
+            throw error.message
         }
-
-        const data = s3
-            .putObject(params)
-            .promise()
-            .then(_ => { return { 
-                url:`https://${AWS_S3_BUCKET_NAME}.s3-${AWS_REGION}.amazonaws.com/${path}` } 
-            },
-                err => {
-                    this.logger.error(err)
-                    return err
-                }
-            )
-
-        return data
     }
 
 }

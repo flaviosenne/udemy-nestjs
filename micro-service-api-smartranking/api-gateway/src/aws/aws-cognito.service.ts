@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { AuthRegisterDto } from '../auth/dtos/auth-register.dto'
 import { CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js'
-import { AwsCognitoConfig } from "./aws-cognito.config";
+import { AwsCognitoConfig } from "./config/aws-cognito.config";
 import { AuthLoginDto } from "src/auth/dtos/auth-login.dto";
 
 @Injectable()
