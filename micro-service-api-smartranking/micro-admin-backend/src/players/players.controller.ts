@@ -25,8 +25,15 @@ export class PlayersController {
             const filterAckError = ackErrors.filter(
                 ackError => e.message.includes(ackError))
 
-            if (filterAckError.length > 0) await channel.ack(originalMsg)
+            if (filterAckError.length > 0){
+                await channel.ack(originalMsg)
+                // deve dar o return para não entrar em loop
+                return
+            } 
             
+            // tenta buscar a msg novamente caso aconteça algum erro
+            // por exemplo o banco está indisponível
+            await channel.anck(originalMsg)
         }
     }
 
